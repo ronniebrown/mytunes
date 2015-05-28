@@ -2,17 +2,33 @@
 var SongQueue = Songs.extend({
 
   initialize: function() {
-    this.on( 'add', this.playFirst, this );
+    this.on( 'add', this.enqueue, this );
+    this.on( 'ended', this.ended, this );
     this.on( 'dequeue', this.dequeue, this );
   },
 
-  playFirst: function(song) {
+  ended: function() {
+    this.dequeue();
+    this.enqueue(); 
+  },
+
+  enqueue: function() {
     if (this.models.length === 1) {
-      this.models[0].play();
-    } 
+      this.playFirst();
+    }
+  },
+
+  playFirst: function() {
+    this.models[0].play();
   },
 
   dequeue: function(song) {
-    this.shift();
+    if (song) {
+      this.remove(song);
+    } else {
+      this.shift();
+    }
   },
+
+  
 });
